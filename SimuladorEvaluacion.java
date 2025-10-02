@@ -3,10 +3,8 @@ public class SimuladorEvaluacion {
         
         
 
-        int[] estudianteNotas = new int[5]; //5 notas
+        int[] estudianteNotas = new int[5]; 
         
-
-        //3 primeras misiones y su puntaje
         estudianteNotas[0] = 75;
         estudianteNotas[1] = 50;
         estudianteNotas[2] = 45;
@@ -69,10 +67,9 @@ public class SimuladorEvaluacion {
         }
         cont ++;
     }
-    if (difeMayor){
-        System.out.println("¡Nivel PROGRESIVO! Sos un Stone Chad en crecimiento 📈");
-    
-    }
+    String stoneChad = (difeMayor) ? "¡Nivel PROGRESIVO! Sos un Stone Chad en crecimiento 📈" : "Sos un Stone CHad estancado";
+    System.out.println(stoneChad);
+
 
     System.out.println("\n\t ----PUNTO 4----"); // PUNTO 4 --------------
     
