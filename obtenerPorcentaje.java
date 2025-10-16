@@ -1,4 +1,5 @@
 public class obtenerPorcentaje {
+    
     public static void main(String[] args) {
         
         double numero1 = 100;
