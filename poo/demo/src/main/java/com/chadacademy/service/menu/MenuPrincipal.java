@@ -73,6 +73,7 @@ public class MenuPrincipal {
 
         servicio.agregarExperimento(experimento);
         System.out.println("Experimento químico registrado con éxito.\n");
+        servicio.mostrarExperimentos();
     }
 
     private void registrarExperimentoFisico() {
@@ -112,6 +113,7 @@ public class MenuPrincipal {
 
         servicio.agregarExperimento(experimento);
         System.out.println("Experimento físico registrado con éxito.\n");
+        servicio.mostrarExperimentos();
     }
 
     private void mostrarExperimentoMayorDuracion() {
