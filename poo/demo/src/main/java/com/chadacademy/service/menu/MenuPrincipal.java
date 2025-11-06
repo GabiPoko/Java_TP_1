@@ -2,10 +2,13 @@ package com.chadacademy.service.menu;
 
 import com.chadacademy.dominio.*;
 import java.util.*;
+import com.chadacademy.service.archivos.ArchivoInvestigadoresService;
+import com.chadacademy.service.archivos.Impl.ArchivoInvestigadoresServiceImpl;
 
 public class MenuPrincipal {
     private List<Investigador> investigadores = new ArrayList<>();
     private List<AbstractExperimento> experimentos = new ArrayList<>();
+    private ArchivoInvestigadoresService archivoInvestigadoresService = new ArchivoInvestigadoresServiceImpl();
     private Scanner scanner = new Scanner(System.in);
 
     public void mostrarMenu() {
@@ -18,6 +21,7 @@ public class MenuPrincipal {
             System.out.println("4. Mostrar todos los experimentos");
             System.out.println("5. Mostrar total de experimentos exitosos y fallidos");
             System.out.println("6. Mostrar experimento de mayor duración");
+            System.out.println("7. Exportar investigadores a CSV");
             System.out.println("0. Salir");
             System.out.print("Seleccione una opción: ");
             opcion = scanner.nextInt();
@@ -30,6 +34,7 @@ public class MenuPrincipal {
                 case 4 -> mostrarExperimentos();
                 case 5 -> mostrarTotales();
                 case 6 -> mostrarExperimentoMayorDuracion();
+                case 7 -> exportarInvestigadoresCSV();
                 case 0 -> System.out.println("Saliendo del sistema...");
                 default -> System.out.println("Opción no válida.");
             }
@@ -177,4 +182,12 @@ public class MenuPrincipal {
             System.out.println(i++ + ". " + inv.getNombre() + " (" + inv.getEdad() + " años)");
         }
     }
+    private void exportarInvestigadoresCSV() {
+    if (investigadores == null || investigadores.isEmpty()) {
+        System.out.println("⚠️ No hay investigadores registrados para exportar.");
+        return;
+    }
+    archivoInvestigadoresService.exportarInvestigadoresCSV(investigadores);
+}
+    
 }
