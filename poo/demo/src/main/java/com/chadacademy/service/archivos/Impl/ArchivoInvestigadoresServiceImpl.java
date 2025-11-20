@@ -10,7 +10,7 @@ import com.opencsv.CSVWriter;
 
 public class ArchivoInvestigadoresServiceImpl implements ArchivoInvestigadoresService  {
 
-    private final String UBICACION_ARCHIVO = "\\src\\main\\java\\com\\chadacademy\\resource\\";
+    private final String UBICACION_ARCHIVO = "\\poo\\demo\\exportadoCSV\\";
 
     CSVWriter csvWriter; 
 
