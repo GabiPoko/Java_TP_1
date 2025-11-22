@@ -1,12 +1,32 @@
 package com.chadacademy;
 
-import com.chadacademy.service.menu.MenuPrincipal;;
+import com.chadacademy.service.menu.MenuPrincipal;
+
+import com.chadacademy.repository.Experimento.Impl.ExperimentoRepositoryImpl;
+import com.chadacademy.repository.Investigador.Impl.InvestigadorRepositoryImpl;
+
+import com.chadacademy.service.experimentos.Impl.ExperimentoServiceImpl;
+import com.chadacademy.service.investigador.impl.InvestigadorServiceImpl;
+import com.chadacademy.service.archivos.Impl.ArchivoInvestigadoresServiceImpl;
 
 public class App {
-    
     public static void main(String[] args) {
-        MenuPrincipal menu = new MenuPrincipal();
+        
+        InvestigadorRepositoryImpl investigadorRepo = new InvestigadorRepositoryImpl();
+        ExperimentoRepositoryImpl experimentoRepo = new ExperimentoRepositoryImpl();
+        
+
+        ArchivoInvestigadoresServiceImpl archivoService = new ArchivoInvestigadoresServiceImpl(); 
+        
+
+        InvestigadorServiceImpl invService = new InvestigadorServiceImpl(investigadorRepo);
+        
+        
+        ExperimentoServiceImpl expService = new ExperimentoServiceImpl(experimentoRepo);
+        
+        MenuPrincipal menu = new MenuPrincipal(invService, expService, archivoService);
+        
+        System.out.println("Sistema listo. Iniciando menú...");
         menu.mostrarMenu();
     }
 }
-

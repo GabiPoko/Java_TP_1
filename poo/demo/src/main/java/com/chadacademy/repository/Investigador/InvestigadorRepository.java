@@ -1,5 +1,12 @@
 package com.chadacademy.repository.Investigador;
 
-public class InvestigadorRepository {
+import com.chadacademy.dominio.Investigador;
+import java.util.List;
 
+public interface InvestigadorRepository {
+    
+    void guardar(Investigador investigador);
+    
+    List<Investigador> buscarTodos();
+    
 }
