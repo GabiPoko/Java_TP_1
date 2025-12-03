@@ -8,14 +8,10 @@ import com.chadacademy.service.investigador.IInvestigadorService;
 import com.chadacademy.utils.ConsolaUtils; 
 
 public class MenuPrincipal {
-    
-    
     private final IInvestigadorService investigadorService;
     private final IExperimentoService experimentoService;
     private final ArchivoInvestigadoresService archivoInvestigadoresService;
     private final ConsolaUtils consolaUtils;
-    
-
     
     public MenuPrincipal(
         IInvestigadorService investigadorService, 
@@ -40,7 +36,6 @@ public class MenuPrincipal {
             System.out.println("6. Mostrar experimento de mayor duración");
             System.out.println("7. Exportar investigadores a CSV");
             System.out.println("0. Salir");
-            //System.out.print("Seleccione una opción: ");
             
             opcion = consolaUtils.leerEntero("Seleccione una opción: ");
         
@@ -56,8 +51,7 @@ public class MenuPrincipal {
                 case 5 -> mostrarTotales();
                 case 6 -> mostrarExperimentoMayorDuracion();
                 case 7 -> exportarInvestigadoresCSV();
-                case 0 -> System.out.println("Saliendo del sistema...");
-                
+                case 0 -> System.out.println("Saliendo del sistema...");                
             }
         } while (opcion != 0);
     }
@@ -77,7 +71,6 @@ public class MenuPrincipal {
         System.out.println("Investigador registrado correctamente.\n");
     }
 
-    
     private void registrarExperimentoQuimico() {
     List<Investigador> investigadoresDisponibles = investigadorService.buscarTodos();
 
@@ -93,8 +86,7 @@ public class MenuPrincipal {
 
     System.out.println("Seleccione un investigador existente:");
     mostrarInvestigadores(investigadoresDisponibles); 
-    
-    
+        
     int index = consolaUtils.leerEntero("Ingrese el número del investigador: ") - 1; 
 
     Investigador investigador = (index >= 0 && index < investigadoresDisponibles.size())
@@ -157,7 +149,6 @@ public class MenuPrincipal {
         }
     }
 
-    
     private void mostrarExperimentos() {
         List<AbstractExperimento> experimentos = experimentoService.buscarTodos();
 
@@ -166,8 +157,7 @@ public class MenuPrincipal {
             return;
     }
 
-        System.out.println("\n===== LISTA DE EXPERIMENTOS =====");
-    
+        System.out.println("\n===== LISTA DE EXPERIMENTOS =====");    
     
         for (AbstractExperimento e : experimentos) {
             System.out.println(e.getNombre() + " - Duración: " + e.getDuracion() + " min");
@@ -190,9 +180,8 @@ public class MenuPrincipal {
         System.out.println("Total de experimentos fallidos: " + fallidos);
     }
 
-    // ------ OPCIÓN 6 (DELEGACIÓN AL SERVICE)
     private void mostrarExperimentoMayorDuracion() {
-        // Delegamos el cálculo al Servicio
+
         AbstractExperimento mayor = experimentoService.experimentoMayorDuracion();
         
         if (mayor == null) {
@@ -203,8 +192,7 @@ public class MenuPrincipal {
         System.out.println("Experimento de mayor duración: " + mayor.getNombre() +
              " (" + mayor.getDuracion() + " min)");
     }
-
-    // Método auxiliar para mostrar investigadores (usa la lista pasada)
+    
     private void mostrarInvestigadores(List<Investigador> investigadores) {
         if (investigadores.isEmpty()) {
             System.out.println("No hay investigadores registrados.");
@@ -216,19 +204,7 @@ public class MenuPrincipal {
         }
     }
     
-    private void mostrarInvestigadores() {
-        List<Investigador> investigadoresDisponibles = investigadorService.buscarTodos();
-        mostrarInvestigadores(investigadoresDisponibles);
-    }
-    
     private void exportarInvestigadoresCSV() {
-        // Pedimos la lista al Servicio de Investigadores
-        List<Investigador> investigadoresDisponibles = investigadorService.buscarTodos();
-        if (investigadoresDisponibles == null || investigadoresDisponibles.isEmpty()) {
-            System.out.println("No hay investigadores registrados para exportar.");
-            return;
-        }
-        // Delegamos el trabajo de E/S de archivos al servicio ArchivoInvestigadoresService
-        archivoInvestigadoresService.exportarInvestigadoresCSV(investigadoresDisponibles);
+            archivoInvestigadoresService.exportarInvestigadoresCSV(investigadorService);
     }
 }

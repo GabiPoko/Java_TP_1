@@ -1,12 +1,10 @@
 package com.chadacademy.service.archivos;
 
-import java.util.List;
-import com.chadacademy.dominio.*;
+import com.chadacademy.service.investigador.IInvestigadorService;
 
 public interface ArchivoInvestigadoresService {
 
-    void exportarInvestigadoresCSV (List<Investigador>investigadores);
-
+    void exportarInvestigadoresCSV (IInvestigadorService investigadorService);
     
 
 }

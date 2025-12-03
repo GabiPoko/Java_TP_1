@@ -6,25 +6,33 @@ import java.util.List;
 
 import com.chadacademy.dominio.Investigador;
 import com.chadacademy.service.archivos.ArchivoInvestigadoresService;
+import com.chadacademy.service.investigador.IInvestigadorService;
 import com.opencsv.CSVWriter;
 
 public class ArchivoInvestigadoresServiceImpl implements ArchivoInvestigadoresService  {
 
-    private final String UBICACION_ARCHIVO = "\\poo\\demo\\exportadoCSV\\";
+    private final String UBICACION_ARCHIVO = "\\exportadoCSV\\";
 
     CSVWriter csvWriter; 
 
     @Override
-    public void exportarInvestigadoresCSV(List<Investigador> investigadores) {
+    public void exportarInvestigadoresCSV(IInvestigadorService investigadorService) {
+        List<Investigador> investigadores = investigadorService.buscarTodos();
+
+        if (investigadores == null || investigadores.isEmpty()) { 
+             System.out.println("No hay investigadores registrados para exportar.");
+             return;
+        }
+
         String ruta = System.getProperty("user.dir").concat(UBICACION_ARCHIVO).concat("investigadores.csv");
         try {
             this.csvWriter = new CSVWriter(new FileWriter(ruta));
 
-            // Cabecera CSV
+            
             String[] encabezado = {"NOMBRE", "EDAD", "CANTIDAD_EXPERIMENTOS"};
             this.csvWriter.writeNext(encabezado);
 
-            // Cuerpo del CSV
+            
             for (Investigador inv : investigadores) {
                 String[] datos = {
                         inv.getNombre(),
@@ -34,14 +42,15 @@ public class ArchivoInvestigadoresServiceImpl implements ArchivoInvestigadoresSe
                 this.csvWriter.writeNext(datos);
             }
 
-            System.out.println("✅ Exportación de investigadores exitosa!");
-            System.out.println("📁 Archivo guardado en: " + ruta);
-
-            this.cerrarWriter();
+            System.out.println("Exportación de investigadores exitosa!");
+            System.out.println("Archivo guardado en: " + ruta);
 
         } catch (IOException ioException) {
-            System.out.println("❌ Error al exportar archivo. Motivo: " + ioException.getMessage());
+            System.out.println("Error al exportar archivo. Motivo: " + ioException.getMessage());
             System.out.println("Ruta del archivo: " + ruta);
+        } finally {
+            
+            this.cerrarWriter(); 
         }
     }
 
@@ -50,11 +59,12 @@ public class ArchivoInvestigadoresServiceImpl implements ArchivoInvestigadoresSe
             try {
                 this.csvWriter.close();
             } catch (IOException e) {
-                System.out.println("❌ Error al cerrar el escritor CSV: " + e.getMessage());
+                System.out.println("Error al cerrar el escritor CSV: " + e.getMessage());
             }
         }
     }
 }
+
 
 
     
