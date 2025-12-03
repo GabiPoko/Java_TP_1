@@ -4,24 +4,28 @@ import com.chadacademy.dominio.*;
 import java.util.*;
 import com.chadacademy.service.archivos.ArchivoInvestigadoresService;
 import com.chadacademy.service.experimentos.IExperimentoService;
-import com.chadacademy.service.investigador.IInvestigadorService; 
+import com.chadacademy.service.investigador.IInvestigadorService;
+import com.chadacademy.utils.ConsolaUtils; 
 
 public class MenuPrincipal {
     
-    // interfaces
+    
     private final IInvestigadorService investigadorService;
     private final IExperimentoService experimentoService;
     private final ArchivoInvestigadoresService archivoInvestigadoresService;
-    private final Scanner scanner = new Scanner(System.in);
+    private final ConsolaUtils consolaUtils;
+    
 
-    // constructor
+    
     public MenuPrincipal(
         IInvestigadorService investigadorService, 
         IExperimentoService experimentoService, 
-        ArchivoInvestigadoresService archivoInvestigadoresService) {
+        ArchivoInvestigadoresService archivoInvestigadoresService,
+        ConsolaUtils consolaUtils) {
         this.investigadorService = investigadorService;
         this.experimentoService = experimentoService;
         this.archivoInvestigadoresService = archivoInvestigadoresService;
+        this.consolaUtils = consolaUtils;
     }
 
     public void mostrarMenu() {
@@ -36,18 +40,14 @@ public class MenuPrincipal {
             System.out.println("6. Mostrar experimento de mayor duración");
             System.out.println("7. Exportar investigadores a CSV");
             System.out.println("0. Salir");
-            System.out.print("Seleccione una opción: ");
+            //System.out.print("Seleccione una opción: ");
             
-            // Manejo de la entrada del usuario
-            if (scanner.hasNextInt()) {
-                opcion = scanner.nextInt();
-                scanner.nextLine(); 
-            } else {
-                System.out.println("Entrada no válida. Por favor, ingrese un número.");
-                scanner.nextLine(); // !!!!
-                opcion = -1; // Opción inválida
-            }
-
+            opcion = consolaUtils.leerEntero("Seleccione una opción: ");
+        
+            if (opcion < 0 || opcion > 7) { 
+                System.out.println("Opción no válida.");
+                continue;
+        }   
             switch (opcion) {
                 case 1 -> registrarInvestigador();
                 case 2 -> registrarExperimentoQuimico();
@@ -57,29 +57,17 @@ public class MenuPrincipal {
                 case 6 -> mostrarExperimentoMayorDuracion();
                 case 7 -> exportarInvestigadoresCSV();
                 case 0 -> System.out.println("Saliendo del sistema...");
-                default -> {
-                    if (opcion != -1) { 
-                        System.out.println("Opción no válida.");
-                    }
-                }
+                
             }
         } while (opcion != 0);
     }
 
-    // OPCIÓN 1 (DELEGACIÓN AL SERVICE)
     private void registrarInvestigador() {
-        System.out.print("Nombre del investigador: ");
-        String nombre = scanner.nextLine();
+        String nombre = consolaUtils.leerString("Nombre del investigador: ");   
+        int edad = consolaUtils.leerEntero("Edad del investigador: ");
 
-        System.out.print("Edad del investigador: ");
-        
-        int edad = 0;
-        if (scanner.hasNextInt()) {
-            edad = scanner.nextInt();
-            scanner.nextLine();
-        } else {
-            System.out.println("Edad no válida. Registro cancelado.");
-            scanner.nextLine();
+        if (edad <= 0) {
+            System.out.println("Error: La edad debe ser un número positivo.");
             return;
         }
 
@@ -89,81 +77,60 @@ public class MenuPrincipal {
         System.out.println("Investigador registrado correctamente.\n");
     }
 
-    // ------------ OPCIÓN 2 (DELEGACIÓN AL SERVICE)
-    private void registrarExperimentoQuimico() {
-        List<Investigador> investigadoresDisponibles = investigadorService.buscarTodos();
-
-        if (investigadoresDisponibles.isEmpty()) {
-            System.out.println("⚠️ Debe registrar al menos un investigador primero.");
-            return;
-        }
-
-        System.out.print("Nombre del experimento: ");
-        String nombre = scanner.nextLine();
-
-        System.out.print("Duración (minutos): ");
-        int duracion = scanner.nextInt();
-        scanner.nextLine();
-
-        System.out.print("¿Fue exitoso? (true/false): ");
-        boolean exitoso = scanner.nextBoolean();
-        scanner.nextLine();
-
-        System.out.print("Tipo de reactivo: ");
-        String reactivo = scanner.nextLine();
-
-        System.out.println("Seleccione un investigador existente:");
-        mostrarInvestigadores(investigadoresDisponibles); // list inv
-        System.out.print("Ingrese el número del investigador: ");
-        int index = scanner.nextInt() - 1;
-        scanner.nextLine();
-
-        Investigador investigador = (index >= 0 && index < investigadoresDisponibles.size())
-            ? investigadoresDisponibles.get(index)
-            : null;
-
-        if (investigador == null) {
-            System.out.println("Investigador no válido o índice fuera de rango.");
-            return;
-        }
-
-        try {
-            ExperimentoQuimico exp = new ExperimentoQuimico(nombre, duracion, exitoso, reactivo, investigador);
-            experimentoService.agregarExperimento(exp);
-            System.out.println("Experimento químico registrado con éxito.\n");
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error al crear experimento: " + e.getMessage());
-        }
-    }
     
-    // ----- OPCIÓN 3 (DELEGACIÓN AL SERVICE)
+    private void registrarExperimentoQuimico() {
+    List<Investigador> investigadoresDisponibles = investigadorService.buscarTodos();
+
+    if (investigadoresDisponibles.isEmpty()) {
+        System.out.println("Debe registrar al menos un investigador primero.");
+        return;
+    }
+
+    String nombre = consolaUtils.leerString("Nombre del experimento: "); 
+    int duracion = consolaUtils.leerEntero("Duración (minutos): ");  
+    boolean exitoso = consolaUtils.leerBoolean("¿Fue exitoso? (true/false): ");
+    String reactivo = consolaUtils.leerString("Tipo de reactivo: ");
+
+    System.out.println("Seleccione un investigador existente:");
+    mostrarInvestigadores(investigadoresDisponibles); 
+    
+    
+    int index = consolaUtils.leerEntero("Ingrese el número del investigador: ") - 1; 
+
+    Investigador investigador = (index >= 0 && index < investigadoresDisponibles.size())
+        ? investigadoresDisponibles.get(index)
+        : null;
+
+    if (investigador == null) {
+        System.out.println("Investigador no válido o índice fuera de rango.");
+        return;
+    }
+
+    try {
+        experimentoService.registrarExperimentoQuimico(nombre, duracion, exitoso, reactivo, investigador);
+        System.out.println("Experimento químico registrado con éxito.\n");
+    } catch (IllegalArgumentException e) {
+        System.out.println("Error al crear experimento: " + e.getMessage());
+    }
+}
+    
     private void registrarExperimentoFisico() {
         List<Investigador> investigadoresDisponibles = investigadorService.buscarTodos();
 
         if (investigadoresDisponibles.size() < 1) { 
-            System.out.println("⚠️ Debe registrar al menos un investigador primero.");
+            System.out.println("Debe registrar al menos un investigador primero.");
             return;
         }
-        
-        System.out.print("Nombre del experimento: ");
-        String nombre = scanner.nextLine();
 
-        System.out.print("Duración (minutos): ");
-        int duracion = scanner.nextInt();
-        scanner.nextLine();
-
-        System.out.print("¿Fue exitoso? (true/false): ");
-        boolean exitoso = scanner.nextBoolean();
-        scanner.nextLine();
-
-        System.out.print("Instrumento utilizado: ");
-        String instrumento = scanner.nextLine();
+        String nombre = consolaUtils.leerString("Nombre del experimento: ");
+        int duracion = consolaUtils.leerEntero("Duración (minutos): ");
+        boolean exitoso = consolaUtils.leerBoolean("¿Fue exitoso? (true/false): ");
+        String instrumento = consolaUtils.leerString("Instrumento utilizado: ");
 
         List<Investigador> listaInv = new ArrayList<>();
         System.out.println("Seleccione investigadores (números separados por coma):");
         mostrarInvestigadores(investigadoresDisponibles); 
-        System.out.print("Ejemplo: 1,2 -> ");
-        String entrada = scanner.nextLine();
+        String entrada = consolaUtils.leerString("Ejemplo: 1,2 -> ");
         String[] indices = entrada.split(",");
 
         for (String s : indices) {
@@ -183,34 +150,42 @@ public class MenuPrincipal {
         }
 
         try {
-            ExperimentoFisico exp = new ExperimentoFisico(nombre, duracion, exitoso, instrumento, listaInv);
-            // !!!!
-            experimentoService.agregarExperimento(exp);
+            experimentoService.registrarExperimentoFisico(nombre, duracion, exitoso, instrumento, listaInv);
             System.out.println("Experimento físico registrado con éxito.\n");
         } catch (IllegalArgumentException e) {
             System.out.println("Error al crear experimento: " + e.getMessage());
         }
     }
 
-    // ------- OPCIÓN 4 (DELEGACIÓN AL SERVICE)
+    
     private void mostrarExperimentos() {
-        
-        experimentoService.mostrarExperimentos();
+        List<AbstractExperimento> experimentos = experimentoService.buscarTodos();
+
+        if (experimentos.isEmpty()) {
+            System.out.println("No hay experimentos registrados.");
+            return;
     }
 
-    // ------ OPCIÓN 5 (LÓGICA CON DATOS)
+        System.out.println("\n===== LISTA DE EXPERIMENTOS =====");
+    
+    
+        for (AbstractExperimento e : experimentos) {
+            System.out.println(e.getNombre() + " - Duración: " + e.getDuracion() + " min");
+        }
+        System.out.println("---------------------------------");
+}
+
     private void mostrarTotales() {
-        // Pedimos la lista al Servicio para hacer el cálculo de la I.U.
         List<AbstractExperimento> experimentos = experimentoService.buscarTodos();
 
         if (experimentos.isEmpty()) {
             System.out.println("No hay experimentos registrados.");
             return;
         }
-
-        long exitosos = experimentos.stream().filter(AbstractExperimento::isExitoso).count();
-        long fallidos = experimentos.size() - exitosos;
-
+        
+        long exitosos = experimentoService.contarExperimentosExitosos();
+        long fallidos = experimentoService.contarExperimentosFallidos();
+        
         System.out.println("Total de experimentos exitosos: " + exitosos);
         System.out.println("Total de experimentos fallidos: " + fallidos);
     }
@@ -250,7 +225,7 @@ public class MenuPrincipal {
         // Pedimos la lista al Servicio de Investigadores
         List<Investigador> investigadoresDisponibles = investigadorService.buscarTodos();
         if (investigadoresDisponibles == null || investigadoresDisponibles.isEmpty()) {
-            System.out.println("⚠️ No hay investigadores registrados para exportar.");
+            System.out.println("No hay investigadores registrados para exportar.");
             return;
         }
         // Delegamos el trabajo de E/S de archivos al servicio ArchivoInvestigadoresService
