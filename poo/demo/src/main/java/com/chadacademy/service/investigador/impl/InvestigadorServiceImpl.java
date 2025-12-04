@@ -5,26 +5,33 @@ import com.chadacademy.service.investigador.IInvestigadorService;
 import com.chadacademy.repository.Investigador.InvestigadorRepository;
 import java.util.List;
 
-// La clase implementa la interfaz (el contrato)
+
 public class InvestigadorServiceImpl implements IInvestigadorService {
     
-    // DEPENDENCIA: Usamos la interfaz del Repositorio para buscar y guardar
+    
     private final InvestigadorRepository investigadorRepository;
 
-    // CONSTRUCTOR: El Repositorio es inyectado aquí.
     public InvestigadorServiceImpl(InvestigadorRepository investigadorRepository) {
         this.investigadorRepository = investigadorRepository;
     }
+    
 
     @Override
-    public void guardarInvestigador(Investigador investigador) {
-        // DELEGACIÓN: El Servicio le pide al Repositorio que haga el trabajo de guardar.
-        investigadorRepository.guardar(investigador);
+    public void registrarInvestigador(String nombre, int edad) {
+        if (edad <= 0) {
+        throw new IllegalArgumentException("La edad debe ser un número positivo.");
     }
+    
+    Investigador inv = new Investigador(nombre, edad);
+    
+    this.investigadorRepository.guardar(inv); 
+}    
+
+
 
     @Override
     public List<Investigador> buscarTodos() {
-        // DELEGACIÓN: El Servicio le pide al Repositorio la lista.
+
         return investigadorRepository.buscarTodos();
     }
 }

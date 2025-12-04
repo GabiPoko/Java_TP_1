@@ -4,13 +4,11 @@ import com.chadacademy.dominio.Investigador;
 import java.util.List;
 
 public interface IInvestigadorService {
-    
-    // para que llame el menu
 
-    void guardarInvestigador(Investigador investigador);
+    //void guardarInvestigador(Investigador investigador);
+
+    void registrarInvestigador(String nombre, int edad);
     
-    // lista completa de inv
     List<Investigador> buscarTodos();
     
-    // revisar que mas se podria agregar aca  (que pide el probelma)
 }

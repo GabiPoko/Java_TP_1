@@ -86,12 +86,10 @@ public long contarExperimentosExitosos() {
 }
 @Override
 public long contarExperimentosFallidos() {
-    // 1. Buscamos todos los experimentos (Delegación al Repository)
     List<AbstractExperimento> experimentos = experimentoRepository.buscarTodos();
     
-    // 2. Lógica de Cálculo (¡Solo filtra por los que NO son exitosos!)
     return experimentos.stream()
-            .filter(e -> !e.isExitoso()) // Filtra por experimentos fallidos
+            .filter(e -> !e.isExitoso()) 
             .count();
     }
 }
