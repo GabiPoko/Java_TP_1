@@ -40,5 +40,22 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(apiError);
     }
 
+    @ExceptionHandler(UsuarioNoEncontradoException.class)
+    public ResponseEntity<ApiError> handleUsuarioNoEncontradoException(
+        UsuarioNoEncontradoException ex, HttpServletRequest request) 
+    {
+        ApiError apiError = ApiError.builder()
+            .timestamp(LocalDateTime.now())
+            .status(HttpStatus.NOT_FOUND.value()) 
+            .error("Recurso no encontrado")
+            .message(ex.getMessage()) 
+            .path(request.getRequestURI())
+            .build(); 
+
+        log.warn("Error 404: Usuario no encontrado en {} : {}", request.getRequestURI(), ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
+    }
+
 
 }

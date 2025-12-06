@@ -14,9 +14,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -58,6 +60,42 @@ public class EntradaDiariaServiceImpl implements EntradaDiariaService {
 
         log.info("Entrada guardado exitosamente");
         return EntradaDiariaMapper.toDto( saved );
+    }
+
+    @Override
+    public List<EntradaDiariaDto> obtenerPorUsuarioYFecha(UUID usuarioId, LocalDate desde, LocalDate hasta) {
+        
+        log.info("Service: buscando entradas para usuario {}", usuarioId);
+
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(usuarioId);
+
+        if (usuarioOptional.isEmpty()) {
+        log.warn("Usuario no encontrado id={}. Se lanza excepción.", usuarioId);
+        throw new IllegalArgumentException("Usuario no encontrado");
+    }
+        List<EntradaDiaria> entradas;
+
+    
+    if (desde != null && hasta != null) {
+        log.info("Aplicando filtro: Rango Completo");
+        entradas = entradaDiariaRepository.findByUsuarioIdAndFechaBetween(usuarioId, desde, hasta);
+        
+    } else if (desde != null) {
+        log.info("Aplicando filtro: Solo Desde");
+        entradas = entradaDiariaRepository.findByUsuarioIdAndFechaGreaterThanEqual(usuarioId, desde);
+        
+    } else if (hasta != null) {
+        log.info("Aplicando filtro: Solo Hasta");
+        entradas = entradaDiariaRepository.findByUsuarioIdAndFechaLessThanEqual(usuarioId, hasta);
+        
+    } else {
+        log.info("Aplicando filtro: Solo Usuario ID");
+        entradas = entradaDiariaRepository.findByUsuarioId(usuarioId);
+    }
+      log.info("Búsqueda finalizada. Se encontraron {} entradas.", entradas.size());
+      return entradas.stream()
+            .map(EntradaDiariaMapper::toDto)
+            .collect(Collectors.toList());
     }
 
 }
