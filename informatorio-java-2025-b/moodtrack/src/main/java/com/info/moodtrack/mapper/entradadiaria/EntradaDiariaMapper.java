@@ -3,6 +3,8 @@ package com.info.moodtrack.mapper.entradadiaria;
 import com.info.moodtrack.dto.entradadiaria.EntradaDiariaDto;
 import com.info.moodtrack.mapper.usuario.UsuarioMapper;
 import com.info.moodtrack.model.EntradaDiaria;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public final class EntradaDiariaMapper {
     public EntradaDiariaMapper() {}

@@ -1,5 +1,11 @@
 package com.info.moodtrack.repository.usuario.specification;
 
+import com.info.moodtrack.model.EntradaDiaria;
+import org.springframework.data.jpa.domain.Specification;
+import java.time.LocalDate;
+import java.util.UUID;
+
+
 public class EntradaDiariaSpecifications {
 
     private EntradaDiariaSpecifications() {}

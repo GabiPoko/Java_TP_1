@@ -13,12 +13,14 @@ import com.info.moodtrack.service.entradadiaria.EntradaDiariaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.jpa.domain.Specification;
+import com.info.moodtrack.repository.usuario.specification.EntradaDiariaSpecifications;
+import com.info.moodtrack.exception.UsuarioNoEncontradoException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
