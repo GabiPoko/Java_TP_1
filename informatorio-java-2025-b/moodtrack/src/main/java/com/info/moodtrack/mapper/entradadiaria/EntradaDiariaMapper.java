@@ -28,4 +28,15 @@ public final class EntradaDiariaMapper {
         return dto;
     }
 
+    public static List<EntradaDiariaDto> toDtoList(List<EntradaDiaria> entradaDiariaList) {
+        if (entradaDiariaList == null || entradaDiariaList.isEmpty()) {
+            return List.of(); 
+        }
+        
+        return entradaDiariaList.stream()
+                .map(EntradaDiariaMapper::toDto)
+                .collect(Collectors.toList());
+    }
 }
+
+

@@ -64,38 +64,34 @@ public class EntradaDiariaServiceImpl implements EntradaDiariaService {
 
     @Override
     public List<EntradaDiariaDto> obtenerPorUsuarioYFecha(UUID usuarioId, LocalDate desde, LocalDate hasta) {
-        
-        log.info("Service: buscando entradas para usuario {}", usuarioId);
-
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(usuarioId);
-
-        if (usuarioOptional.isEmpty()) {
-        log.warn("Usuario no encontrado id={}. Se lanza excepción.", usuarioId);
-        throw new IllegalArgumentException("Usuario no encontrado");
-    }
-        List<EntradaDiaria> entradas;
-
     
-    if (desde != null && hasta != null) {
-        log.info("Aplicando filtro: Rango Completo");
-        entradas = entradaDiariaRepository.findByUsuarioIdAndFechaBetween(usuarioId, desde, hasta);
-        
-    } else if (desde != null) {
-        log.info("Aplicando filtro: Solo Desde");
-        entradas = entradaDiariaRepository.findByUsuarioIdAndFechaGreaterThanEqual(usuarioId, desde);
-        
-    } else if (hasta != null) {
-        log.info("Aplicando filtro: Solo Hasta");
-        entradas = entradaDiariaRepository.findByUsuarioIdAndFechaLessThanEqual(usuarioId, hasta);
-        
-    } else {
-        log.info("Aplicando filtro: Solo Usuario ID");
-        entradas = entradaDiariaRepository.findByUsuarioId(usuarioId);
-    }
-      log.info("Búsqueda finalizada. Se encontraron {} entradas.", entradas.size());
-      return entradas.stream()
-            .map(EntradaDiariaMapper::toDto)
-            .collect(Collectors.toList());
-    }
+        log.info("Service: Iniciando búsqueda de entradas para usuario {} con filtros. Desde: {}, Hasta: {}", 
+             usuarioId, desde, hasta);
 
+        if (usuarioRepository.findById(usuarioId).isEmpty()) {
+            log.warn("Usuario no encontrado id={}. Lanzando excepción 404.", usuarioId);
+            throw new UsuarioNoEncontradoException(usuarioId.toString()); 
+    }
+        
+        Specification<EntradaDiaria> spec = Specification.unrestricted();
+
+        spec = spec.and(EntradaDiariaSpecifications.porUsuario(usuarioId));
+    
+        spec = spec.and(EntradaDiariaSpecifications.porUsuario(usuarioId));
+    
+        if (desde != null) {
+            log.info("Añadiendo filtro Specification: Desde");
+            spec = spec.and(EntradaDiariaSpecifications.fechaDesde(desde));
+    }
+    
+        if (hasta != null) {
+            log.info("Añadiendo filtro Specification: Hasta");
+            spec = spec.and(EntradaDiariaSpecifications.fechaHasta(hasta));
+    }
+    
+        List<EntradaDiaria> entradas = entradaDiariaRepository.findAll(spec);
+    
+        log.info("Búsqueda finalizada. Se encontraron {} entradas.", entradas.size());
+        return EntradaDiariaMapper.toDtoList(entradas);
+}
 }
