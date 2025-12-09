@@ -78,9 +78,7 @@ public class EntradaDiariaServiceImpl implements EntradaDiariaService {
         Specification<EntradaDiaria> spec = Specification.unrestricted();
 
         spec = spec.and(EntradaDiariaSpecifications.porUsuario(usuarioId));
-    
-        spec = spec.and(EntradaDiariaSpecifications.porUsuario(usuarioId));
-    
+        
         if (desde != null) {
             log.info("Añadiendo filtro Specification: Desde");
             spec = spec.and(EntradaDiariaSpecifications.fechaDesde(desde));

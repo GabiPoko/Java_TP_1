@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 
-public class EntradaDiariaSpecifications {
+public final class EntradaDiariaSpecifications {
 
     private EntradaDiariaSpecifications() {}
 
